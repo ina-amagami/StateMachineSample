@@ -23,17 +23,12 @@ public class StateMachine<TOwner>
         /// このステートのオーナー
         /// </summary>
         protected TOwner Owner => stateMachine.Owner;
-        /// <summary>
-        /// パラメータ
-        /// </summary>
-        protected object Param { get; private set; }
 
         /// <summary>
         /// ステート開始
         /// </summary>
-        internal void Enter(State prevState, object param)
+        internal void Enter(State prevState)
         {
-            Param = param;
             OnEnter(prevState);
         }
         /// <summary>
@@ -160,10 +155,10 @@ public class StateMachine<TOwner>
     /// </summary>
     /// <param name="firstState">起動時のステート</param>
     /// <param name="param">パラメータ</param>
-    public void Start(State firstState, object param = null)
+    public void Start(State firstState)
     {
         CurrentState = firstState;
-        CurrentState.Enter(null, param);
+        CurrentState.Enter(null);
     }
 
     /// <summary>
@@ -178,8 +173,7 @@ public class StateMachine<TOwner>
     /// イベントを発行する
     /// </summary>
     /// <param name="eventId">イベントID</param>
-    /// <param name="param">パラメータ</param>
-    public void Dispatch(int eventId, object param = null)
+    public void Dispatch(int eventId)
     {
         State to;
         if (!CurrentState.transitions.TryGetValue(eventId, out to))
@@ -190,18 +184,17 @@ public class StateMachine<TOwner>
                 return;
             }
         }
-        Change(to, param);
+        Change(to);
     }
 
     /// <summary>
     /// ステートを変更する
     /// </summary>
     /// <param name="nextState">遷移先のステート</param>
-    /// <param name="param">パラメータ</param>
-    private void Change(State nextState, object param = null)
+    private void Change(State nextState)
     {
         CurrentState.Exit(nextState);
-        nextState.Enter(CurrentState, param);
+        nextState.Enter(CurrentState);
         CurrentState = nextState;
     }
 }
