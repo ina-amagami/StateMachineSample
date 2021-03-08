@@ -101,7 +101,7 @@ public class StateMachine<TOwner>
     /// <summary>
     /// 特定のステートを取得、なければ生成する
     /// </summary>
-    private T GetOrAddState<T>() where T : State, new()
+    public T GetOrAddState<T>() where T : State, new()
     {
         foreach (var state in states)
         {

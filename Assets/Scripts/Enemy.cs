@@ -4,10 +4,23 @@ using State = StateMachine<Enemy>.State;
 
 public class Enemy : MonoBehaviour
 {
-    // Enemyの総数
-    public static int Count { get; private set; }
+	#region Enemyの数カウント
 
-    private StateMachine<Enemy> stateMachine;
+	public static int Count { get; private set; }
+
+    private void Awake()
+    {
+        Count++;
+    }
+
+    private void OnDestroy()
+    {
+        Count--;
+    }
+
+	#endregion
+
+	private StateMachine<Enemy> stateMachine;
 
     private enum Event : int
 	{
@@ -17,28 +30,18 @@ public class Enemy : MonoBehaviour
         LastOne,
 	}
 
-    private void Awake()
-	{
-        Count++;
-	}
-
-	private void OnDestroy()
-	{
-        Count--;
-	}
-
 	private void Start()
     {
         stateMachine = new StateMachine<Enemy>(this);
 
-        // 残りが自分だけになったら動き出す
-        stateMachine.AddTransition<StateStop, StateRandomWalk>((int)Event.LastOne);
+		// 残りが自分だけになったら動き出す
+		stateMachine.AddTransition<StateStop, StateRandomWalk>((int)Event.LastOne);
 
-        // 一定時間ごとに ランダムウォーク ⇔ ランダム待機
-        stateMachine.AddTransition<StateRandomWalk, StateRandomWait>((int)Event.Timeout);
-        stateMachine.AddTransition<StateRandomWait, StateRandomWalk>((int)Event.Timeout);
+		// 一定時間ごとに ランダムウォーク ⇔ ランダム待機
+		stateMachine.AddTransition<StateRandomWalk, StateRandomWait>((int)Event.Timeout);
+		stateMachine.AddTransition<StateRandomWait, StateRandomWalk>((int)Event.Timeout);
 
-        stateMachine.Start<StateStop>();
+		stateMachine.Start<StateStop>();
     }
 
     private void Update()
@@ -78,7 +81,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // ランダムウォーク
+    // ランダムな方向へ前進
     private class StateRandomWalk : State
     {
         private const float Speed = 4f;

@@ -66,7 +66,7 @@ public class Actor : MonoBehaviour
 		}
 	}
 
-	// 対象の方向へ回転する
+	// 左右どちらかへ回転する
 	private class StateRotation : State
 	{
 		// 回転の速度
